@@ -95,7 +95,7 @@ const BorrowPopup: React.FC<BorrowPopupProps> = ({ onClose }) => {
           <>
             {inviteStep === 'input' && (
               <div className="mt-4">
-                <p className="text-gray-700 mb-2">Paste your friend’s address to invite:</p>
+                <p className="text-gray-700 mb-2">Paste your friend&apos;s address to invite:</p>
                 <input
                   type="text"
                   placeholder="Paste Address"

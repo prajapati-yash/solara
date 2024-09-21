@@ -7,7 +7,7 @@ function ConnectToBorrow() {
   return (
     <div>
         <div className="bg-white shadow-lg rounded-lg p-6 max-w-lg mx-auto mt-10 border border-black">
-        <h2 className="text-2xl font-bold text-black mb-4 ">Connect your wallet – it's like a first date for your crypto and our credit score!😉</h2>
+        <h2 className="text-2xl font-bold text-black mb-4 ">Connect your wallet it's like a first date for your crypto and our credit score!😉</h2>
         <button
           onClick={() => open()}
           className="w-full bg-orange-500 text-white font-bold py-3 px-4 rounded-lg hover:bg-orange-600 transition duration-300 flex items-center justify-center"
