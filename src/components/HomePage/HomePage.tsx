@@ -101,8 +101,12 @@ export default function Component() {
                 </p>
               </div>
               <div className="space-x-4">
-                <Button className="bg-orange-500 text-white hover:bg-orange-600">Get Started</Button>
-                <Button className="bg-white text-orange-500 hover:bg-orange-100">Learn More</Button>
+                <a className="bg-orange-500 text-white hover:bg-orange-600 px-4 py-2 rounded-lg" href="/borrow">
+                  Get Started
+                </a>
+                <a className="bg-white text-orange-500 hover:bg-orange-100 px-4 py-2 rounded-lg" href="https://www.example.com/learn-more">
+                  Learn More
+                </a>
               </div>
             </div>
           </div>

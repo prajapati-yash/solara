@@ -1,10 +1,14 @@
+"use client"
+
 import React from 'react'
 import Link from 'next/link'
-import { WorldIDWidget } from '@worldcoin/id';
 import { useState } from 'react';
+import { signIn, signOut, useSession } from "next-auth/react";
 
 const Navbar: React.FC = () => {
     const [isConnecting, setIsConnecting] = useState(false);
+    const { data: session, status } = useSession();
+    const loading = status === "loading";
 
     const handleWorldCoinConnect = async () => {
       setIsConnecting(true);
@@ -12,7 +16,7 @@ const Navbar: React.FC = () => {
     };
   return (
     <div className="bg-white shadow-md">
-     <header className="px-4 lg:px-6 h-14 flex items-center">
+     <header className="px-4 lg:px-6 h-14 flex items-center justify-between">
         <Link className="flex items-center justify-center" href="#">
         <div style={{ color: '#c2410c' }}>
         <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className='text-orange-700'>
@@ -22,19 +26,34 @@ const Navbar: React.FC = () => {
 
           <span className="ml-2 text-4xl font-bold text-orange-700 ">Solara</span>
         </Link>
-        <div className="ml-auto flex gap-4 sm:gap-6 text-orange-700 text-2xl"  >
-        
         <div className="flex items-center">
+        {!session && !loading ? (
             <button
-              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
-            //   onClick={() => {
-            //     // TODO: Implement WorldCoin ID connection logic
-            //     console.log('Connecting WorldCoin ID...')
-            //   }}
+              className="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-4 py-2 rounded-md transition duration-300 ease-in-out"
+              onClick={() => signIn("worldcoin")}
             >
-              Connect WorldCoin ID
+              Sign in with World ID
             </button>
-          </div>
+          ) : session?.user ? (
+            <div className="flex items-center space-x-4">
+              <div className="text-right hidden sm:block">
+                <small className="block text-orange-600">Signed in as</small>
+                <strong className="text-sm text-orange-700">
+                  {session.user.email
+                    ? `${session.user.email.slice(0, 6)}...${session.user.email.slice(-4)}`
+                    : session.user.name
+                      ? `${session.user.name.slice(0, 6)}...${session.user.name.slice(-4)}`
+                      : 'User'}
+                </strong>
+              </div>
+              <button
+                className="bg-red-500 hover:bg-red-600 text-white font-semibold px-4 py-2 rounded-md transition duration-300 ease-in-out"
+                onClick={() => signOut()}
+              >
+                Sign out
+              </button>
+            </div>
+          ) : null}
         </div>
       </header>
       </div>
