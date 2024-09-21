@@ -16,10 +16,10 @@ if (!projectId) {
 
 // Set up metadata
 const metadata = {
-  name: "appkit-example-scroll",
-  description: "AppKit Example - Scroll",
-  url: "https://scrollapp.com", // origin must match your domain & subdomain
-  icons: ["https://avatars.githubusercontent.com/u/179229932"]
+  name: "Solara",
+  description: "MicroFinance Lending Made Easy!",
+  url: "https://solara.vercel.app", // origin must match your domain & subdomain
+  icons: [""]
 }
 
 // Create the modal

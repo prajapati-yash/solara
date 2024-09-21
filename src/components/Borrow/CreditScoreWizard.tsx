@@ -1,8 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Button } from '@/utils/Button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/utils/Card';
 import { Wallet, CheckCircle, XCircle, Zap } from 'lucide-react';
 import Confetti from 'react-confetti';
+import { signIn, signOut, useSession } from "next-auth/react";
+import { createAppKit, useAppKit } from '@reown/appkit/react';
+import { useAccount, useDisconnect } from 'wagmi';
+import axios from 'axios';
+
+const appKit = createAppKit({
+  networks: [],
+  projectId: process.env.NEXT_PUBLIC_PROJECT_ID || ''
+});
 
 const CreditScoreWizard: React.FC = () => {
   const [step, setStep] = useState<number>(0);
@@ -11,6 +20,11 @@ const CreditScoreWizard: React.FC = () => {
   const [isBuilder, setIsBuilder] = useState<boolean>(false);
   const [progress, setProgress] = useState<number>(0);
   const [showConfetti, setShowConfetti] = useState<boolean>(false);
+
+  const { data: session, status } = useSession();
+  const { open } = useAppKit();
+  const { address, isConnected } = useAccount();
+  const { disconnect } = useDisconnect();
 
   const steps = [
     { title: "Sign in with Worldcoin", icon: "🌍" },
@@ -21,54 +35,92 @@ const CreditScoreWizard: React.FC = () => {
     { title: "Final Result", icon: "🎉" },
   ];
 
+  // Effect to handle session changes
+  useEffect(() => {
+    if (status === "authenticated" && step === 0) {
+      setStep(1);
+    }
+  }, [status, step]);
+
+  // Effect to handle wallet connection
+  useEffect(() => {
+    if (isConnected && address && session?.user && step === 1) {
+      saveWalletAddress(address);
+      setStep(2);
+    }
+  }, [isConnected, address, session, step]);
+
+  const saveWalletAddress = useCallback(async (address: string) => {
+    if (!session?.user?.name && !session?.user?.email) {
+      console.error("No valid World ID found");
+      return;
+    }
+
+    const worldId = session.user.name || session.user.email;
+
+    if (isConnected && address) {
+      try {
+        const response = await axios.post('/api/save_wallet', {
+          worldId: worldId,
+          walletAddress: address,
+        });
+        console.log(response.data.message);
+      } catch (error) {
+        console.error('Error saving wallet address:', error);
+      }
+    }
+  }, [isConnected, session]);
+
+  const handleAction = async () => {
+    if (step === 0) {
+      setIsLoading(true);
+      await signIn("worldcoin", { redirect: false });
+      setIsLoading(false);
+    } else if (step === 1) {
+      await open();
+    }
+  };
+
   useEffect(() => {
     let timer: NodeJS.Timeout;
     let progressInterval: NodeJS.Timeout;
 
     if (step > 1 && step < steps.length - 1) {
-        setIsLoading(true);
-        setProgress(0);
+      setIsLoading(true);
+      setProgress(0);
+      
+      progressInterval = setInterval(() => {
+        setProgress(prev => Math.min(prev + 5, 100));
+      }, 200);
+    
+      timer = setTimeout(() => {
+        clearInterval(progressInterval);
+        setIsLoading(false);
+        setProgress(100);
         
-        progressInterval = setInterval(() => {
-          setProgress(prev => Math.min(prev + 5, 100));
-        }, 200);
-      
-        timer = setTimeout(() => {
-          clearInterval(progressInterval);
-          setIsLoading(false);
-          setProgress(100);
-          
-          if (step === 2) {
-            setCreditScore(Math.floor(Math.random() * 850));
-          } else if (step === 3) {
-            setIsBuilder(Math.random() > 0.5);
-          }
-          
-          // Use 'step + 1' directly instead of 'prevStep + 1'
-          setTimeout(() => {
-            setStep(step + 1); // Update here
-            if (step + 1 === steps.length - 1) {
-              if (creditScore !== null && (creditScore >= 700 || isBuilder)) {
-                setShowConfetti(true);
-                setTimeout(() => setShowConfetti(false), 5000);
-              }
+        if (step === 2) {
+          setCreditScore(Math.floor(Math.random() * 850));
+        } else if (step === 3) {
+          setIsBuilder(Math.random() > 0.5);
+        }
+        
+        setTimeout(() => {
+          setStep(step + 1);
+          if (step + 1 === steps.length - 1) {
+            if (creditScore !== null && (creditScore >= 700 || isBuilder)) {
+              setShowConfetti(true);
+              setTimeout(() => setShowConfetti(false), 5000);
             }
-          }, 500);
-        }, 4000);
-      }
-      
+          }
+        }, 500);
+      }, 4000);
+    }
 
     return () => {
       clearTimeout(timer);
       clearInterval(progressInterval);
     };
   }, [step, creditScore, isBuilder, steps.length]);
-
-  const handleAction = () => {
-    if (step <= 1) {
-      setStep(prevStep => prevStep + 1);
-    }
-  };
 
   const renderContent = () => {
     switch (step) {
