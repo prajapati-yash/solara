@@ -3,7 +3,7 @@
 import { wagmiAdapter, projectId } from '../config'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { createAppKit } from '@reown/appkit/react' 
-import { mainnet, arbitrum, avalanche, base, optimism, polygon } from '@reown/appkit/networks'
+import { mainnet, arbitrum, avalanche, base, optimism, polygon, gnosis } from '@reown/appkit/networks'
 import React, { type ReactNode } from 'react'
 import { cookieToInitialState, WagmiProvider, type Config } from 'wagmi'
 
@@ -17,7 +17,7 @@ if (!projectId) {
 // Set up metadata
 const metadata = {
   name: "Solara",
-  description: "MicroFinance Lending Made Easy!",
+  description: "MicroFinance Borrowing Made Easy!",
   url: "https://solara.vercel.app", // origin must match your domain & subdomain
   icons: [""]
 }
@@ -26,7 +26,7 @@ const metadata = {
 const modal = createAppKit({
   adapters: [wagmiAdapter],
   projectId,
-  networks: [mainnet, arbitrum, avalanche, base, optimism, polygon],
+  networks: [mainnet, arbitrum, avalanche, base, optimism, polygon, gnosis],
   defaultNetwork: mainnet,
   metadata: metadata,
   features: {

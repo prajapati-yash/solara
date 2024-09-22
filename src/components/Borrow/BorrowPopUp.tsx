@@ -1,16 +1,29 @@
 import React, { useState, useEffect, useRef } from 'react';
-
+import { useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
+import LandingContract from "../../contracts/LandingContract.json"
 interface BorrowPopupProps {
   onClose: () => void;
 }
 
+
+// Replace with your actual contract ABI and address
+const contractABI =LandingContract
+const contractAddress = '0xa1d1102CfC84Ce28E346e13cD91819d4885143Aa'; // Replace with your contract address
+
 const BorrowPopup: React.FC<BorrowPopupProps> = ({ onClose }) => {
   const [friendAddress, setFriendAddress] = useState<string>('');
   const [eligibilityMessage, setEligibilityMessage] = useState<string>('');
-  const [inviteStep, setInviteStep] = useState<'initial' | 'input' | 'checking' | 'result'>('initial');
+  const [inviteStep, setInviteStep] = useState<'initial' | 'input' | 'checking' | 'result' | 'borrow'>('initial');
   const [hasBuilderPack, setHasBuilderPack] = useState<boolean | null>(null);
 
   const modalRef = useRef<HTMLDivElement>(null);
+
+  const { writeContract, data: hash, error, isPending } = useWriteContract();
+
+  const { isLoading: isConfirming, isSuccess: isConfirmed } = 
+    useWaitForTransactionReceipt({
+      hash,
+    });
 
   const checkBuilderPack = () => {
     const randomResult = Math.random() > 0.5; // Simulate checking for builder pack
@@ -21,10 +34,8 @@ const BorrowPopup: React.FC<BorrowPopupProps> = ({ onClose }) => {
     checkBuilderPack();
 
     if (hasBuilderPack) {
-      // If the user has a builder pack
-      setInviteStep('initial'); // Or a specific step if needed
+      setInviteStep('borrow');
     } else {
-      // If the user does not have a builder pack
       setInviteStep('input');
     }
   };
@@ -41,9 +52,18 @@ const BorrowPopup: React.FC<BorrowPopupProps> = ({ onClose }) => {
       setTimeout(() => {
         const isEligible = Math.random() > 0.3; // Simulate eligibility check
         setEligibilityMessage(isEligible ? 'We have sent a notification on wallet connect using Reown.' : 'Not Eligible for an Invite');
-        setInviteStep('result');
+        setInviteStep(isEligible ? 'borrow' : 'result');
       }, 2000); // Simulate API delay
     }
+  };
+
+  const handleBorrow = async () => {
+    writeContract({
+      address: contractAddress,
+      abi: contractABI,
+      functionName: 'requestLoan',
+      args: [1], // 1n represents 1 in BigInt, adjust as needed
+    });
   };
 
   useEffect(() => {
@@ -58,6 +78,12 @@ const BorrowPopup: React.FC<BorrowPopupProps> = ({ onClose }) => {
       document.removeEventListener('mousedown', handleOutsideClick);
     };
   }, [onClose]);
+
+  useEffect(() => {
+    if (isConfirmed) {
+      setEligibilityMessage('Successfully borrowed $1!');
+    }
+  }, [isConfirmed]);
 
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
@@ -87,9 +113,19 @@ const BorrowPopup: React.FC<BorrowPopupProps> = ({ onClose }) => {
               Well, seems like you have onchain social reputation. 
               Your onchain work has paid off; you don't need a signer. You are eligible to borrow $1 without a signer.
             </h2>
-            <button className="w-full bg-orange-700 text-white py-2 rounded-lg hover:bg-orange-800 transition mt-4" onClick={onClose}>
-              Continue
+            <button 
+              className="w-full bg-orange-700 text-white py-2 rounded-lg hover:bg-orange-800 transition mt-4" 
+              onClick={handleBorrow}
+              disabled={isPending || isConfirming}
+            >
+              {isPending ? 'Confirming...' : isConfirming ? 'Borrowing...' : 'Borrow $1'}
             </button>
+            {error && (
+              <p className="text-red-500 mt-2">Error: {error.message}</p>
+            )}
+            {isConfirmed && (
+              <p className="text-green-500 mt-2">Successfully borrowed $1!</p>
+            )}
           </>
         ) : (
           <>
@@ -108,7 +144,7 @@ const BorrowPopup: React.FC<BorrowPopupProps> = ({ onClose }) => {
             {inviteStep === 'checking' && (
               <div className="text-center mt-4">
                 <p className="text-orange-700">Checking Eligibility...</p>
-                <div className="loader mt-4"></div> {/* Placeholder for spinner/loader */}
+                <div className="loader mt-4"></div>
               </div>
             )}
             {inviteStep === 'result' && (
@@ -117,7 +153,25 @@ const BorrowPopup: React.FC<BorrowPopupProps> = ({ onClose }) => {
                   {eligibilityMessage}
                 </p>
                 {eligibilityMessage.includes('notification') && (
-                  <p className="text-orange-700">In Invite Sent!</p>
+                  <p className="text-orange-700">Invite Sent!</p>
+                )}
+              </div>
+            )}
+            {inviteStep === 'borrow' && (
+              <div className="text-center mt-4">
+                <p className="text-green-600 mb-4">{eligibilityMessage}</p>
+                <button 
+                  className="w-full bg-orange-700 text-white py-2 rounded-lg hover:bg-orange-800 transition" 
+                  onClick={handleBorrow}
+                  disabled={isPending || isConfirming}
+                >
+                  {isPending ? 'Confirming...' : isConfirming ? 'Borrowing...' : 'Borrow $1'}
+                </button>
+                {error && (
+                  <p className="text-red-500 mt-2">Error: {error.message}</p>
+                )}
+                {isConfirmed && (
+                  <p className="text-green-500 mt-2">Successfully borrowed $1!</p>
                 )}
               </div>
             )}
