@@ -25,7 +25,6 @@ const CreditScoreWizard: React.FC = () => {
   const { open } = useAppKit();
   const { address, isConnected } = useAccount();
   const { disconnect } = useDisconnect();
-
   const steps = [
     { title: "Sign in with Worldcoin", icon: "🌍" },
     { title: "Connect Your Wallet", icon: "💼" },
@@ -186,7 +185,7 @@ const CreditScoreWizard: React.FC = () => {
             onClick={handleAction} 
             className="w-full"
           >
-            {step === 1 && <Wallet className="mr-2 h-4 w-4" />}
+            {step === 1 &&  <w3m-button />}
             {steps[step].title}
           </Button>
         ) : step < steps.length - 1 ? (
