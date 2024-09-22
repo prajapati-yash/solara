@@ -76,7 +76,7 @@ const CreditScoreWizard: React.FC = () => {
       await signIn("worldcoin", { redirect: false });
       setIsLoading(false);
     } else if (step === 1) {
-      await open();
+      open();
     }
   };
 

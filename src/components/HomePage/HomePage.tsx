@@ -67,22 +67,19 @@ export default function Component() {
   return (
     <div className="bg-gradient-to-b from-yellow-50 to-orange-100 min-h-screen">
       <header className="px-4 lg:px-6 h-14 flex items-center">
-        <Link className="flex items-center justify-center" href="#">
+        <Link className="flex items-center justify-center" href="/">
         <div style={{ color: '#c2410c' }}>
         <Icon name="Mountain" className=" text-orange-700" />
         </div>
 
           <span className="ml-2 text-4xl font-bold text-orange-700 ">Solara</span>
         </Link>
-        <nav className="ml-auto flex gap-4 sm:gap-6 text-orange-700 text-2xl"  >
-          <Link className="font-medium hover:underline underline-offset-4 " href="#features" style={{fontSize:"1.5rem"}}>
+        <nav className="ml-auto flex gap-4 sm:gap-6 text-orange-700 text-sm md:text-xl"  >
+          <Link className="font-sm hover:underline underline-offset-4 " href="#features">
             Features
           </Link>
-          <Link className="font-medium hover:underline underline-offset-4" href="#how-it-works">
+          <Link className="font-sm hover:underline underline-offset-4" href="#how-it-works">
             How It Works
-          </Link>
-          <Link className="font-medium hover:underline underline-offset-4" href="#about">
-            About
           </Link>
         </nav>
       </header>
@@ -92,7 +89,7 @@ export default function Component() {
             <div className="flex flex-col items-center space-y-4 text-center">
               <div className="space-y-2">
               <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl text-orange-700">
-                    Empower Your Crypto Borrowing with Solara
+              Microfinance Onchain – Accelerate Your Future
               </h1>
 
                 <p className="mx-auto max-w-[700px] text-gray-500 md:text-xl dark:text-gray-400">
@@ -103,9 +100,6 @@ export default function Component() {
               <div className="space-x-4">
                 <a className="bg-orange-500 text-white hover:bg-orange-600 px-4 py-2 rounded-lg" href="/borrow">
                   Get Started
-                </a>
-                <a className="bg-white text-orange-500 hover:bg-orange-100 px-4 py-2 rounded-lg" href="https://www.example.com/learn-more">
-                  Learn More
                 </a>
               </div>
             </div>
@@ -161,7 +155,7 @@ export default function Component() {
             </div>
           </div>
         </section>
-        <section  id="users-review" className="w-full py-12 md:py-24 lg:py-32 bg-orange-50 dark:bg-gray-800">
+        {/* <section  id="users-review" className="w-full py-12 md:py-24 lg:py-32 bg-orange-50 dark:bg-gray-800">
           <div className="container px-4 md:px-6 mx-auto">
             <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl text-center mb-12">What Our Users Say</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -186,12 +180,12 @@ export default function Component() {
               ))}
             </div>
           </div>
-        </section>
+        </section> */}
         <section id="join-us" className="w-full py-12 md:py-24 lg:py-32 bg-gradient-to-r from-orange-400 to-red-500">
           <div className="container px-4 md:px-6 mx-auto">
             <div className="flex flex-col items-center space-y-4 text-center text-white">
               <div className="space-y-2">
-                <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">Ready to Shine with Solara?</h2>
+                <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">Ready to shine with Solara?</h2>
                 <p className="mx-auto max-w-[600px] text-white/90 md:text-xl">
                   Join the future of decentralized lending. Connect your wallet, check your score, and start borrowing
                   with confidence today.
@@ -201,7 +195,7 @@ export default function Component() {
                 <form className="flex space-x-2">
                   <Input className="max-w-lg flex-1 bg-white text-black" placeholder="Enter your email" type="email" />
                   <Button className="bg-white text-orange-500 hover:bg-orange-100" type="submit">
-                    Get Started
+                    Subscribe
                   </Button>
                 </form>
               </div>
@@ -211,7 +205,7 @@ export default function Component() {
       </main>
       <footer className="flex justify-between py-6 w-full shrink-0 items-center text-center px-4 md:px-6 border-t">
   <p className="text-lg text-orange-700">© 2024 Solara. All rights reserved.</p>
-  <p className="text-lg text-orange-700">Made with ❤️ by Solara Team</p>
+  <p className="text-lg text-orange-700">Made with ❤️ <a href='https://ethglobal.com/events/singapore2024'>@ETHSingapore</a></p>
 </footer>
 
     </div>
